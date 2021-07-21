@@ -47,6 +47,7 @@ public:
     Vector(void);
     explicit Vector (T const* values);
     explicit Vector (T const& values);
+    Vector (Vector<T,N> const& other); // copy
 
     /* 填充值*/
     Vector<T,N>& fill (T const& value);
@@ -58,14 +59,21 @@ public:
     T maximum(void) const;
     /* 求和*/
     T sum(void) const;
-    /* 点积*/
+    /* 所有元素累积*/
     T product(void) const;
+    /* 两个向量乘积 */
+    T dot(Vector<T,N> const& rhs) const;
+
 
     /** 对象操作 */
     T& operator[] (int index);
     T const& operator[] (int index) const;
     T& operator() (int index);
     T const& operator() (int index) const;
+    T* operator* (void);
+    T const* operator* (void) const;
+
+    void print();
 
 protected:
     T v[N];
@@ -77,27 +85,29 @@ template <typename T, int N>
 int constexpr Vector<T,N>::dim;
 
 template <typename T, int N>
-inline
 Vector<T, N>::Vector(void)
 {
 }
 
 template <typename T, int N>
-inline
 Vector<T, N>::Vector(T const* values)
 {
     std::copy(values, values + N, v);
 }
 
 template <typename T, int N>
-inline
 Vector<T,N>::Vector (T const& value)
 {
     fill(value);
 }
 
 template <typename T, int N>
-inline
+Vector<T,N>::Vector (Vector<T,N> const& other)
+{
+    std::copy(*other, *other + N, v);
+}
+
+template <typename T, int N>
 Vector<T,N>& Vector<T,N>::fill (T const& value)
 {
     std::fill(v, v + N, value);
@@ -105,7 +115,6 @@ Vector<T,N>& Vector<T,N>::fill (T const& value)
 }
 
 template <typename T, int N>
-inline
 Vector<T,N>& Vector<T,N>::copy (T const* values, int num)
 {
     std::copy(values, values + num, this->v);
@@ -113,62 +122,84 @@ Vector<T,N>& Vector<T,N>::copy (T const* values, int num)
 }
 
 template <typename T, int N>
-inline
 T Vector<T,N>::minimum() const
 {
     return *std::min_element(v, v + N);
 }
 
 template <typename T, int N>
-inline
 T Vector<T,N>::maximum() const
 {
     return *std::max_element(v, v + N);
 }
 
 template <typename T, int N>
-inline
 T Vector<T,N>::sum(void) const
 {
     return std::accumulate(v, v + N, T(0), std::plus<T>());
 }
 
 template <typename T, int N>
-inline
 T Vector<T,N>::product(void) const
 {
     return std::accumulate(v, v + N, T(1), std::multiplies<T>());
 }
 
+template <typename T, int N>
+T Vector<T,N>::dot(Vector<T,N> const& rhs) const
+{
+    T sum = 0;
+    for (int i=0; i<N; i++){
+        sum += (v[i] * rhs[i]);
+    }
+    return sum;
+}
 
 template <typename T, int N>
-inline
 T& Vector<T,N>::operator[] (int index)
 {
     return v[index];
 }
 
 template <typename T, int N>
-inline
 T const& Vector<T,N>::operator[] (int index) const
 {
     return v[index];
 }
 
 template <typename T, int N>
-inline
 T& Vector<T,N>::operator() (int index)
 {
     return v[index];
 }
 
 template <typename T, int N>
-inline
 T const& Vector<T,N>::operator() (int index) const
 {
     return v[index];
 }
 
+template <typename T, int N>
+T* Vector<T,N>::operator* (void)
+{
+    return v;
+}
+
+template <typename T, int N>
+T const* Vector<T,N>::operator* (void) const
+{
+    return v;
+}
+
+template <typename T, int N>
+void Vector<T,N>::print()
+{
+    std::cout << "vector shape: " << dim << std::endl;
+    for(int i=0; i<dim; i++){
+        std::cout << v[i] << " ";
+    }
+    std::cout << std::endl;
+}
 
 MATH_NAMESPACE_END
 
