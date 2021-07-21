@@ -45,13 +45,19 @@ void test_Matrix()
         }
     }
     mat.print();
-    math::Matrix<int, 4,2> mat1(2);
-    mat1.print();
+    math::Matrix<int, 4,2> mat1;
+    for (int i = 0; i < mat1.rows; ++i) {
+        for (int j = 0; j < mat1.cols; ++j) {
+            mat1(i, j) = (i*mat1.cols + j) * 10;
+        }
+    }
 
-//    math::Matrix<int, 3,2> mat2 = mat.mult(mat1);
-//    mat2.print();
+    math::Matrix<int, 3,2> mat2 = mat.mult(mat1);
+    mat2.print();
+    math::Vector<int, 2> v1(2);
+    mat2.mult(v1).print();
+    mat2.negated().print();
 }
-
 
 
 int main() {
