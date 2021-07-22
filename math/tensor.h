@@ -118,42 +118,6 @@ Matrix<T,N,M> Tensor<T,D,N,M>::layer (int index) const
     return this->layers[index];
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 template <typename T, int D, int N, int M>
 void Tensor<T,D,N,M>::print()
 {
