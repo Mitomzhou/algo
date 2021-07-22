@@ -20,19 +20,6 @@
 MATH_NAMESPACE_BEGIN
 
 template <typename T, int D, int N, int M> class Tensor;
-typedef Matrix<float, 2, 2> Matrix2f;
-typedef Matrix<float, 3, 3> Matrix3f;
-typedef Matrix<float, 4, 4> Matrix4f;
-typedef Matrix<double, 2, 2> Matrix2d;
-typedef Matrix<double, 3, 3> Matrix3d;
-typedef Matrix<double, 4, 4> Matrix4d;
-typedef Matrix<int, 2, 2> Matrix2i;
-typedef Matrix<int, 3, 3> Matrix3i;
-typedef Matrix<int, 4, 4> Matrix4i;
-typedef Matrix<unsigned int, 2, 2> Matrix2ui;
-typedef Matrix<unsigned int, 3, 3> Matrix3ui;
-typedef Matrix<unsigned int, 4, 4> Matrix4ui;
-
 
 template <typename T, int D, int N, int M>
 class Tensor
