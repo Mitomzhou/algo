@@ -2,6 +2,7 @@
 
 #include "math/vector.h"
 #include "math/matrix.h"
+#include "math/tensor.h"
 
 /**
  * 测试Vector.h
@@ -71,16 +72,35 @@ void test_Matrix()
     mat.print();
     mat.delete_row(0).print();
     mat.delete_col(3).print();
+}
+
+void test_Tensor()
+{
+    math::Tensor<int,2,3,4> t1(6);
+    t1.print();
+    t1.fill(8);
+    t1.print();
+
+    t1.layer(1).print();
 
 
+//    math::Matrix<int, 3,4> mat;
+//    for (int i = 0; i < mat.rows; ++i) {
+//        for (int j = 0; j < mat.cols; ++j) {
+//            mat(i, j) = i*mat.cols + j;
+//        }
+//    }
+//    mat.print();
+//    mat.fill(3);
+//    mat.print();
 }
 
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-//    test_Vector();
-    test_Matrix();
-
+    // test_Vector();
+    // test_Matrix();
+    test_Tensor();
 
     return 0;
 }

@@ -113,6 +113,7 @@ public:
     Matrix<T,N,M> operator/ (T const& rhs) const;
 
     void print();
+    void shape();
 
 protected:
     T m[N * M];
@@ -480,6 +481,12 @@ void Matrix<T,N,M>::print()
         }
         std::cout << std::endl;
     }
+}
+
+template <typename T, int N, int M>
+void Matrix<T,N,M>::shape()
+{
+    std::cout << "matrix shape: (" << N <<", " << M <<")"<< std::endl;
 }
 
 MATH_NAMESPACE_END
