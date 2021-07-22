@@ -54,6 +54,11 @@ public:
     Vector<T,M> row(int index) const;
     Vector<T,N> col(int index) const;
 
+    Matrix<T,N,M+1> hstack (Vector<T,N> const& other) const; // 水平方向堆叠
+    Matrix<T,N+1,M> vstack (Vector<T,M> const& other) const; // 垂直方向堆叠
+    Matrix<T,N-1,M> delete_row (int index) const;
+    Matrix<T,N,M-1> delete_col (int index) const;
+
     /* 返回matrix最小值最大值 */
     T minimum (void) const;
     T maximum (void) const;
@@ -85,9 +90,6 @@ public:
     /* 返回元素 */
     T& operator() (int row, int col);
     T const& operator() (int row, int col) const;
-    /* 返回某行 */
-    T& operator[] (unsigned int i);
-    T const& operator[] (unsigned int i) const;
     /* 赋值操作 */
     Matrix<T,N,M>& operator= (Matrix<T,N,M> const& rhs);
     /* 取负操作 */
@@ -178,6 +180,75 @@ Vector<T,N> Matrix<T,N,M>::col(int index) const
 }
 
 template <typename T, int N, int M>
+Matrix<T,N,M+1> Matrix<T,N,M>::hstack (Vector<T,N> const& other) const
+{
+    Matrix<T,N,M+1> ret;
+    for(int i=0; i<N; i++){
+        for (int j = 0; j < M+1; ++j) {
+            if (j == M){
+                ret(i,j) = other[i];
+            }else{
+                ret(i,j) = (*this)(i, j);
+            }
+        }
+    }
+    return ret;
+}
+
+template <typename T, int N, int M>
+Matrix<T,N+1,M> Matrix<T,N,M>::vstack (Vector<T,M> const& other) const
+{
+    Matrix<T,N+1,M> ret;
+    for(int i=0; i<N+1; i++){
+        for (int j = 0; j < M; ++j) {
+            if (i == N){
+                ret(i,j) = other[j];
+            }else{
+                ret(i,j) = (*this)(i, j);
+            }
+        }
+    }
+    return ret;
+}
+
+template <typename T, int N, int M>
+Matrix<T,N-1,M> Matrix<T,N,M>::delete_row (int index) const
+{
+    Matrix<T,N-1,M> ret;
+    for (int i = 0; i < N; ++i) {
+        if (i == index){
+            continue;
+        }
+        for (int j = 0; j < M; ++j) {
+            if(i < index){
+                ret(i, j) = (*this)(i, j);
+            }else{
+                ret(i-1, j) = (*this)(i, j);
+            }
+        }
+    }
+    return ret;
+}
+
+template <typename T, int N, int M>
+ Matrix<T,N,M-1> Matrix<T,N,M>::delete_col (int index) const
+{
+    Matrix<T,N,M-1> ret;
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < M; ++j) {
+            if (j == index){
+                continue;
+            } else if(i < index){
+                ret(i, j) = (*this)(i, j);
+            }else{
+                ret(i, j-1) = (*this)(i, j);
+            }
+        }
+    }
+    return ret;
+}
+
+template <typename T, int N, int M>
 T Matrix<T,N,M>::minimum() const
 {
     return *std::min_element(m, m + N*M);
@@ -189,6 +260,7 @@ T Matrix<T,N,M>::maximum() const
     return *std::max_element(m, m + N*M);
 }
 
+/** 改变了对象的值 */
 template <typename T, int N, int M>
 Matrix<T,N,M>& Matrix<T,N,M>::negate (void)
 {
@@ -196,6 +268,7 @@ Matrix<T,N,M>& Matrix<T,N,M>::negate (void)
     return *this;
 }
 
+/** 未改变对象的值 */
 template <typename T, int N, int M>
 Matrix<T,N,M> Matrix<T,N,M>::negated (void) const
 {
@@ -347,24 +420,55 @@ Vector<T,N> Matrix<T,N,M>::operator* (Vector<T,M> const& rhs) const
     return Matrix<T,N,M>::mult(rhs);
 }
 
-    template <typename T, int N, int M>
-    Matrix<T,N,M>& Matrix<T,N,M>::operator+= (T const& rhs)
-    {
-        //std::for_each(m, m + N*M, &calculate::)
-    }
+template <typename T, int N, int M>
+Matrix<T,N,M>& Matrix<T,N,M>::operator+= (T const& rhs)
+{
+    std::for_each(m, m + N*M, calculate::foreach_addition_const<T>(rhs));
+    return (*this);
+}
 
+template <typename T, int N, int M>
+Matrix<T,N,M> Matrix<T,N,M> ::operator+ (T const& rhs) const
+{
+    return Matrix<T,N,M>(*this) += rhs;
+}
 
-///* 加减乘除常数 */
-//Matrix<T,N,M>& operator+= (T const& rhs);
-//Matrix<T,N,M> operator+ (T const& rhs) const;
-//Matrix<T,N,M>& operator-= (T const& rhs);
-//Matrix<T,N,M> operator- (T const& rhs) const;
-//Matrix<T,N,M>& operator*= (T const& rhs);
-//Matrix<T,N,M> operator* (T const& rhs) const;
-//Matrix<T,N,M>& operator/= (T const& rhs);
-//Matrix<T,N,M> operator/ (T const& rhs) const;
+template <typename T, int N, int M>
+Matrix<T,N,M>& Matrix<T,N,M>::operator-= (T const& rhs)
+{
+    std::for_each(m, m + N*M, calculate::foreach_substraction_const<T>(rhs));
+    return (*this);
+}
 
+template <typename T, int N, int M>
+Matrix<T,N,M> Matrix<T,N,M> ::operator- (T const& rhs) const
+{
+    return Matrix<T,N,M>(*this) -= rhs;
+}
 
+template <typename T, int N, int M>
+Matrix<T,N,M>& Matrix<T,N,M>::operator*= (T const& rhs)
+{
+    std::for_each(m, m + N*M, calculate::foreach_multiply_const<T>(rhs));
+}
+
+template <typename T, int N, int M>
+Matrix<T,N,M> Matrix<T,N,M> ::operator* (T const& rhs) const
+{
+    return Matrix<T,N,M>(*this) *= rhs;
+}
+
+template <typename T, int N, int M>
+Matrix<T,N,M>& Matrix<T,N,M>::operator/= (T const& rhs)
+{
+    std::for_each(m, m + N*M, calculate::foreach_divition_const<T>(rhs));
+}
+
+template <typename T, int N, int M>
+Matrix<T,N,M> Matrix<T,N,M> ::operator/ (T const& rhs) const
+{
+    return Matrix<T,N,M>(*this) /= rhs;
+}
 
 template <typename T, int N, int M>
 void Matrix<T,N,M>::print()

@@ -16,11 +16,37 @@ void foreach_negate_value(T& value)
     value = -value;
 }
 
-//template <typename T>
-//void foreach_negate_value(T& value)
-//{
-//    value = -value;
-//}
+template <typename T>
+struct foreach_addition_const
+{
+    T value;
+    foreach_addition_const(T const & value) : value(value){}
+    void operator() (T& val){val += value; }
+};
+
+template <typename T>
+struct foreach_substraction_const
+{
+    T value;
+    foreach_substraction_const(T const & value) : value(value){}
+    void operator() (T& val){val -= value; }
+};
+
+template <typename T>
+struct foreach_multiply_const
+{
+    T value;
+    foreach_multiply_const(T const & value) : value(value){}
+    void operator() (T& val){val *= value; }
+};
+
+template <typename T>
+struct foreach_divition_const
+{
+    T value;
+    foreach_divition_const(T const & value) : value(value){}
+    void operator() (T& val){val /= value; }
+};
 
 
 

@@ -55,8 +55,24 @@ void test_Matrix()
     math::Matrix<int, 3,2> mat2 = mat.mult(mat1);
     mat2.print();
     math::Vector<int, 2> v1(2);
-    mat2.mult(v1).print();
-    mat2.negated().print();
+    mat2.mult(v1);
+    mat2.negate();
+    mat2 += 1;
+    mat2.print();
+    math::Matrix<int, 3,2> mat3 = mat2 + 1;
+    mat2.print();
+    mat3.print();
+    mat3 /= 10;
+    mat3.print();
+
+    math::Matrix<int, 3,3> mat4 = mat3.hstack(mat3.col(0));
+    mat4.print();
+
+    mat.print();
+    mat.delete_row(0).print();
+    mat.delete_col(3).print();
+
+
 }
 
 
