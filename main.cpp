@@ -46,6 +46,7 @@ void test_Matrix()
         }
     }
     mat.print();
+
     math::Matrix<int, 4,2> mat1;
     for (int i = 0; i < mat1.rows; ++i) {
         for (int j = 0; j < mat1.cols; ++j) {
@@ -77,30 +78,23 @@ void test_Matrix()
 void test_Tensor()
 {
     math::Tensor<int,2,3,4> t1(6);
-    t1.print();
     t1.fill(8);
     t1.print();
+    math::Matrix<int,3,4> mat(2);
+    math::Tensor<int,3,3,4> t2 = t1.addLayer(mat);
+    t2.print();
 
-    t1.layer(1).print();
+    math::Tensor<int,5,3,4> t3 = t2.addLayers(t1);
+    t3.print();
 
-
-//    math::Matrix<int, 3,4> mat;
-//    for (int i = 0; i < mat.rows; ++i) {
-//        for (int j = 0; j < mat.cols; ++j) {
-//            mat(i, j) = i*mat.cols + j;
-//        }
-//    }
-//    mat.print();
-//    mat.fill(3);
-//    mat.print();
 }
 
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    // test_Vector();
-    // test_Matrix();
-    test_Tensor();
+//     test_Vector();
+//    test_Matrix();
+     test_Tensor();
 
     return 0;
 }

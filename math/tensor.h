@@ -38,13 +38,20 @@ public:
 
 
     Tensor<T,D,N,M>& fill (T const& value);
-    Matrix<T,N,M> layer (int index) const;
 
+    Tensor<T,D+1,N,M> addLayer(Matrix<T,N,M> const& inlayer);
+
+    template<int U>
+    Tensor<T,D+U,N,M> addLayers(Tensor<T,U,N,M> const& inlayers);
+
+    Matrix<T,N,M> operator[] (int index) const;
 
 
     void print();
     void shape();
-protected:
+
+    std::vector<Matrix<T,N,M>> getLayers() const;
+
     typedef std::vector<Matrix<T,N,M>> Layers;
     Layers layers;
 
@@ -64,7 +71,7 @@ template <typename T, int D, int N, int M>
 Tensor<T,D,N,M>::Tensor (void)
 {
     for(int i=0; i<D; i++){
-        Matrix<T,N,M> mat;
+        Matrix<T,N,M> mat(0);
         layers.push_back(mat);
     }
 }
@@ -100,9 +107,39 @@ Tensor<T,D,N,M>& Tensor<T,D,N,M>::fill (T const& value)
 }
 
 template <typename T, int D, int N, int M>
-Matrix<T,N,M> Tensor<T,D,N,M>::layer (int index) const
+Tensor<T,D+1,N,M> Tensor<T,D,N,M>::addLayer(Matrix<T,N,M> const& inlayer)
 {
-    return this->layers[index];
+    Tensor<T,D+1,N,M> ret;
+    for(int d=0; d<D+1; d++){
+        if(d < D){
+            ret.layers[d] = layers[d];
+        }else {
+            ret.layers[d] = inlayer;
+        }
+    }
+    return ret;
+}
+
+
+template <typename T, int D, int N, int M>
+template<int U>
+Tensor<T,D+U,N,M> Tensor<T,D,N,M>::addLayers(Tensor<T,U,N,M> const& inlayers)
+{
+    Tensor<T,D+U,N,M> ret;
+    for(int d=0; d<D+U; d++){
+        if(d < D){
+            ret.layers[d] = layers[d];
+        }else {
+            ret.layers[d] = inlayers[d-D];
+        }
+    }
+    return ret;
+}
+
+template <typename T, int D, int N, int M>
+Matrix<T,N,M> Tensor<T,D,N,M>::operator[] (int index) const
+{
+    return layers[index];
 }
 
 template <typename T, int D, int N, int M>
@@ -122,6 +159,13 @@ void Tensor<T,D,N,M>::shape()
 {
     std::cout << "tensor shape: (" << D << ", " << N << ", " << M << ")" << std::endl;
 }
+
+    template <typename T, int D, int N, int M>
+    std::vector<Matrix<T,N,M>> Tensor<T,D,N,M>::getLayers() const
+    {
+        return this->layers;
+    }
+
 
 MATH_NAMESPACE_END
 
